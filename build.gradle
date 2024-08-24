@@ -26,12 +26,16 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	runtimeOnly 'io.asyncer:r2dbc-mysql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.assertj:assertj-core:3.23.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
