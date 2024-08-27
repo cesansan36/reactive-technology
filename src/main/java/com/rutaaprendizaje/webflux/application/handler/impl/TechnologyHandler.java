@@ -1,6 +1,7 @@
 package com.rutaaprendizaje.webflux.application.handler.impl;
 
 import com.rutaaprendizaje.webflux.application.dto.request.SaveTechnologyRequest;
+import com.rutaaprendizaje.webflux.application.dto.response.TechnologyForCapabilityResponse;
 import com.rutaaprendizaje.webflux.application.dto.response.TechnologyResponse;
 import com.rutaaprendizaje.webflux.application.handler.ITechnologyHandler;
 import com.rutaaprendizaje.webflux.application.mapper.ITechnologyRequestMapper;
@@ -75,6 +76,16 @@ public class TechnologyHandler implements ITechnologyHandler {
                 .map(technologyResponseMapper::toTechnologyResponse);
 
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(technologyResponseFlux, TechnologyResponse.class);
+    }
+
+    @Override
+    public Mono<ServerResponse> findByNames(ServerRequest request) {
+        List<String> names = request.queryParams().get("names");
+
+        Flux<TechnologyForCapabilityResponse> technologyResponseFlux = technologyServicePort.findAllByNames(names)
+                .map(technologyResponseMapper::toTechnologyForCapabilityResponse);
+
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(technologyResponseFlux, TechnologyForCapabilityResponse.class);
     }
 
 }

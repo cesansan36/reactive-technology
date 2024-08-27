@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static com.rutaaprendizaje.webflux.util.Constants.BY_NAMES_SUB_PATH;
 import static com.rutaaprendizaje.webflux.util.Constants.GET_BY_ID_SUB_PATH;
 import static com.rutaaprendizaje.webflux.util.Constants.PAGINATED_SUB_PATH;
 import static com.rutaaprendizaje.webflux.util.Constants.PATH;
@@ -23,9 +24,10 @@ public class TechnologyRouter {
     @Bean
     public RouterFunction<ServerResponse> router(ITechnologyHandler technologyHandler) {
         return RouterFunctions.route()
-                .GET(PATH, technologyHandler::findAll)
                 .GET(PATH + PAGINATED_SUB_PATH, technologyHandler::findAllPaginated)
                 .GET(PATH + GET_BY_ID_SUB_PATH, technologyHandler::findById)
+                .GET(PATH + BY_NAMES_SUB_PATH, technologyHandler::findByNames)
+                .GET(PATH, technologyHandler::findAll)
                 .POST(PATH, technologyHandler::save)
                 .build();
     }

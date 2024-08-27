@@ -5,6 +5,8 @@ import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface ITechnologyPersistencePort {
     Flux<TechnologyModel> findAll();
 
@@ -15,4 +17,6 @@ public interface ITechnologyPersistencePort {
     Mono<TechnologyModel> save(Mono<TechnologyModel> technologyModel);
 
     Flux<TechnologyModel> findAllPaginated(int page, int size, String sortBy, Sort.Direction direction);
+
+    Flux<TechnologyModel> findAllByNames(List<String> names);
 }

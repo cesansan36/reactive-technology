@@ -13,4 +13,6 @@ public interface ITechnologyHandler {
     Mono<ServerResponse> save(ServerRequest request);
 
     Mono<ServerResponse> findAllPaginated(ServerRequest request);
+
+    Mono<ServerResponse> findByNames(ServerRequest request);
 }
