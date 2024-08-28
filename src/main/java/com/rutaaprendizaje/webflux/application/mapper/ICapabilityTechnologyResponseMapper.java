@@ -1,0 +1,9 @@
+package com.rutaaprendizaje.webflux.application.mapper;
+
+import com.rutaaprendizaje.webflux.application.dto.response.CapabilityWithTechnologiesResponse;
+import com.rutaaprendizaje.webflux.domain.model.CapabilityTechnologyModel;
+import com.rutaaprendizaje.webflux.domain.model.CapabilityWithTechnologiesModel;
+
+public interface ICapabilityTechnologyResponseMapper {
+    CapabilityWithTechnologiesResponse toCapabilityWithTechnologiesResponse(CapabilityWithTechnologiesModel capabilityWithTechnologiesModel);
+}

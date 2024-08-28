@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 
 import static com.rutaaprendizaje.webflux.util.Constants.GET_BY_ID_SUB_PATH;
 import static com.rutaaprendizaje.webflux.util.Constants.PAGINATED_SUB_PATH;
-import static com.rutaaprendizaje.webflux.util.Constants.PATH;
+import static com.rutaaprendizaje.webflux.util.Constants.TECHNOLOGIES_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -54,10 +54,10 @@ class TechnologyHandlerTest {
 
     private RouterFunction<ServerResponse> routerFunction() {
         return RouterFunctions.route()
-                .GET(PATH, technologyHandler::findAll)
-                .GET(PATH + PAGINATED_SUB_PATH, technologyHandler::findAllPaginated)
-                .GET(PATH + GET_BY_ID_SUB_PATH, technologyHandler::findById)
-                .POST(PATH, technologyHandler::save)
+                .GET(TECHNOLOGIES_PATH, technologyHandler::findAll)
+                .GET(TECHNOLOGIES_PATH + PAGINATED_SUB_PATH, technologyHandler::findAllPaginated)
+                .GET(TECHNOLOGIES_PATH + GET_BY_ID_SUB_PATH, technologyHandler::findById)
+                .POST(TECHNOLOGIES_PATH, technologyHandler::save)
                 .build();
     }
 
