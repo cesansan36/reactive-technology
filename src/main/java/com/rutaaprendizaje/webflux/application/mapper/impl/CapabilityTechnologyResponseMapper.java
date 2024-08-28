@@ -3,7 +3,6 @@ package com.rutaaprendizaje.webflux.application.mapper.impl;
 import com.rutaaprendizaje.webflux.application.dto.response.CapabilityWithTechnologiesResponse;
 import com.rutaaprendizaje.webflux.application.dto.response.TechnologyInCapabilityResponse;
 import com.rutaaprendizaje.webflux.application.mapper.ICapabilityTechnologyResponseMapper;
-import com.rutaaprendizaje.webflux.domain.model.CapabilityTechnologyModel;
 import com.rutaaprendizaje.webflux.domain.model.CapabilityWithTechnologiesModel;
 
 import java.util.ArrayList;

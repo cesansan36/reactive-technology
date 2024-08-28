@@ -1,7 +1,6 @@
 package com.rutaaprendizaje.webflux.domain.ports.in;
 
 import com.rutaaprendizaje.webflux.domain.model.TechnologyModel;
-import org.reactivestreams.Publisher;
 import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

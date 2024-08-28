@@ -10,7 +10,6 @@ import com.rutaaprendizaje.webflux.domain.ports.out.ICapabilityTechnologyPersist
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CapabilityTechnologyUseCase implements ICapabilityTechnologyServicePort {
@@ -29,48 +28,25 @@ public class CapabilityTechnologyUseCase implements ICapabilityTechnologyService
                 .flatMapMany(link -> {
                     Long capabilityId = link.getId();
 
+                    // Obtenemos las tecnologías desde el servicio
                     Flux<TechnologyModel> technologies = Mono.just(getTechnologiesNamesFromLinkModel(link))
                             .flatMapMany(technologyServicePort::findAllByNames);
-//                            .doOnNext(technology -> System.out.println("CapabilityTechnologyUseCase.saveAll() - technology: " + technology.toString()));
 
-                    return technologies.map(technology -> new CapabilityTechnologyModel(null, capabilityId, technology.getId()))
+                    // Guardamos las asociaciones en la base de datos
+                    return technologies
+                            .map(technology -> new CapabilityTechnologyModel(null, capabilityId, technology.getId()))
                             .as(capabilityTechnologyPersistencePort::saveAll)
-                            .then(Mono.just(buildCapabilityWithTechnologies(capabilityId, technologies)));
+                            // Devolvemos el CapabilityWithTechnologiesModel con la lista de tecnologías
+                            .thenMany(technologies.collectList().map(list -> buildCapabilityWithTechnologies(capabilityId, list)));
                 })
-                .collectList()
-                .map(list -> list.get(0));
+                .next();
     }
 
-    private CapabilityWithTechnologiesModel buildCapabilityWithTechnologies(Long capabilityId, Flux<TechnologyModel> technologies) {
-
-        CapabilityWithTechnologiesModel capabilityWithTechnologiesModel = new CapabilityWithTechnologiesModel(capabilityId, new ArrayList<>());
-
-        technologies
-                .collectList()
-                .doOnNext(list -> {
-                    System.out.println("La lista ======================");
-                    list.forEach(technology -> System.out.println("technology: " + technology.toString()));
-                })
-                .doOnNext(capabilityWithTechnologiesModel::setTechnologies)
-                .doOnNext(capa -> System.out.println("CapabilityWithTechnologiesModel: " + capa.toString()));
-
+    private CapabilityWithTechnologiesModel buildCapabilityWithTechnologies(Long capabilityId, List<TechnologyModel> technologies) {
+        CapabilityWithTechnologiesModel capabilityWithTechnologiesModel = new CapabilityWithTechnologiesModel(capabilityId, technologies);
+        technologies.forEach(technology -> System.out.println("technology: " + technology.toString())); // Para verificar los resultados
         return capabilityWithTechnologiesModel;
     }
-
-//    @Override
-//    public Mono<List<CapabilityTechnologyModel>> saveAll(Mono<LinkedCapabilityTechnologyModel> linkModel) {
-//        return linkModel
-//                .flatMapMany(link -> {
-//                    Long capabilityId = link.getId();
-//
-//                    return Mono.just(getTechnologiesNamesFromLinkModel(link))
-//                            .flatMapMany(technologyServicePort::findAllByNames)
-//                            .map(technology -> new CapabilityTechnologyModel(null, capabilityId, technology.getId()));
-//                })
-//                .as(capabilityTechnologyPersistencePort::saveAll)
-//                .map(capabilityTechnologyModel -> capabilityTechnologyModel)
-//                .collectList();
-//    }
 
     private List<String> getTechnologiesNamesFromLinkModel(LinkedCapabilityTechnologyModel linkModel) {
         List<String> technologiesNames;
