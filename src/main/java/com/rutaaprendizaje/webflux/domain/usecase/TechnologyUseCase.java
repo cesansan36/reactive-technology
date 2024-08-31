@@ -29,7 +29,9 @@ public class TechnologyUseCase implements ITechnologyServicePort {
 
     @Override
     public Mono<TechnologyModel> findById(Long id) {
-        return technologyPersistencePort.findById(id).switchIfEmpty(Mono.error(new TechnologyNotFoundException(TECHNOLOGY_NOT_FOUND)));
+        return technologyPersistencePort
+                .findById(id)
+                .switchIfEmpty(Mono.error(new TechnologyNotFoundException(TECHNOLOGY_NOT_FOUND)));
     }
 
     @Override

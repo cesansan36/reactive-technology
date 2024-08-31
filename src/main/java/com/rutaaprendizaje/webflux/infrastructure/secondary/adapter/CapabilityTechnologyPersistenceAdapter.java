@@ -1,8 +1,8 @@
 package com.rutaaprendizaje.webflux.infrastructure.secondary.adapter;
 
-import com.rutaaprendizaje.webflux.domain.exception.TechnologyNotFoundException;
 import com.rutaaprendizaje.webflux.domain.model.CapabilityTechnologyModel;
 import com.rutaaprendizaje.webflux.domain.ports.out.ICapabilityTechnologyPersistencePort;
+import com.rutaaprendizaje.webflux.infrastructure.secondary.exception.DuplicateRegistryException;
 import com.rutaaprendizaje.webflux.infrastructure.secondary.mapper.ICapabilityTechnologyEntityMapper;
 import com.rutaaprendizaje.webflux.infrastructure.secondary.repository.ICapabilityTechnologyRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class CapabilityTechnologyPersistenceAdapter implements ICapabilityTechno
                                 .saveAll(capabilityTechnologyEntities)
                                 .map(capabilityTechnologyEntityMapper::toModel)
                                 .onErrorResume(DuplicateKeyException.class, ex ->
-                                        Mono.error(new TechnologyNotFoundException(DUPLICATE_RELATIONSHIP_EXCEPTION))
+                                        Mono.error(new DuplicateRegistryException(DUPLICATE_RELATIONSHIP_EXCEPTION))
                                 )
                 );
     }

@@ -41,9 +41,14 @@ public class TechnologyHandler implements ITechnologyHandler {
     public Mono<ServerResponse> findById(ServerRequest request) {
         Long id = Long.valueOf(request.pathVariable("id"));
 
-        Mono<TechnologyResponse> technologyResponseMono = technologyServicePort.findById(id).map(technologyResponseMapper::toTechnologyResponse);
+        Mono<TechnologyResponse> technologyResponseMono = technologyServicePort
+                .findById(id)
+                .map(technologyResponseMapper::toTechnologyResponse);
 
-        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(technologyResponseMono, TechnologyResponse.class);
+        return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(technologyResponseMono, TechnologyResponse.class);
     }
 
     @Override
