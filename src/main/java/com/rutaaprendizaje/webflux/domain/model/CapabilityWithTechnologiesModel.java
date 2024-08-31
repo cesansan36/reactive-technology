@@ -12,6 +12,9 @@ public class CapabilityWithTechnologiesModel {
         this.technologies = technologies;
     }
 
+    public CapabilityWithTechnologiesModel() {
+    }
+
     public Long getCapabilityId() {
         return capabilityId;
     }

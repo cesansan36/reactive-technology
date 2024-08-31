@@ -19,4 +19,6 @@ public interface ITechnologyPersistencePort {
     Flux<TechnologyModel> findAllPaginated(int page, int size, String sortBy, Sort.Direction direction);
 
     Flux<TechnologyModel> findAllByNames(List<String> names);
+
+    Flux<TechnologyModel> findAllByIds(List<Long> ids);
 }

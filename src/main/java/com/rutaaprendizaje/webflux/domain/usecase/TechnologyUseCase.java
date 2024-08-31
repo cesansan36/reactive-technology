@@ -64,4 +64,9 @@ public class TechnologyUseCase implements ITechnologyServicePort {
                     return Flux.fromIterable(technologies);
                 });
     }
+
+    @Override
+    public Flux<TechnologyModel> findAllByIds(List<Long> ids) {
+        return technologyPersistencePort.findAllByIds(ids);
+    }
 }

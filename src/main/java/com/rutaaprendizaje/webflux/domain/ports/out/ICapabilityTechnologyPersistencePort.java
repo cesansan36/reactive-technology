@@ -5,4 +5,6 @@ import reactor.core.publisher.Flux;
 
 public interface ICapabilityTechnologyPersistencePort {
     Flux<CapabilityTechnologyModel> saveAll(Flux<CapabilityTechnologyModel> capabilityTechnologyModels);
+
+    Flux<CapabilityTechnologyModel> findAllByCapabilityId(Long capabilityId);
 }

@@ -36,4 +36,10 @@ public class CapabilityTechnologyPersistenceAdapter implements ICapabilityTechno
                                 )
                 );
     }
+
+    @Override
+    public Flux<CapabilityTechnologyModel> findAllByCapabilityId(Long capabilityId) {
+        return capabilityTechnologyRepository.findAllByCapabilityId(capabilityId)
+                .map(capabilityTechnologyEntityMapper::toModel);
+    }
 }

@@ -31,4 +31,16 @@ public class CapabilityTechnologyHandler implements ICapabilityTechnologyHandler
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(responseMono, CapabilityWithTechnologiesResponse.class);
     }
 
+    @Override
+    public Mono<ServerResponse> findTechnologiesByCapabilityId(ServerRequest request) {
+        Long capabilityId = Long.valueOf(request.pathVariable("capabilityId"));
+        Mono<CapabilityWithTechnologiesResponse> response = capabilityTechnologyServicePort
+                .findAllByCapabilityId(capabilityId)
+                .map(capabilityTechnologyResponseMapper::toCapabilityWithTechnologiesResponse);
+
+        return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response, CapabilityWithTechnologiesResponse.class);
+    }
 }

@@ -9,4 +9,5 @@ public final class Constants {
     public static final String PAGINATED_SUB_PATH = "/paginated";
     public static final String GET_BY_ID_SUB_PATH = "/{id}";
     public static final String BY_NAMES_SUB_PATH = "/list/by-names";
+    public static final String GET_BY_CAPABILITY_ID_SUB_PATH = "/{capabilityId}";
 }

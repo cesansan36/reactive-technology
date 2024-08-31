@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface ICapabilityTechnologyHandler {
     Mono<ServerResponse> save(ServerRequest request);
+
+    Mono<ServerResponse> findTechnologiesByCapabilityId(ServerRequest request);
 }

@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface ICapabilityTechnologyServicePort {
     Mono<CapabilityWithTechnologiesModel> saveAll(Mono<LinkedCapabilityTechnologyModel> linkModel);
+
+    Mono<CapabilityWithTechnologiesModel> findAllByCapabilityId(Long capabilityId);
 }

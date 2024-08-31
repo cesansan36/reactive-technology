@@ -63,4 +63,9 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
     public Flux<TechnologyModel> findAllByNames(List<String> names) {
         return technologyRepository.findByNameIn(names).map(technologyEntityMapper::toTechnologyModel);
     }
+
+    @Override
+    public Flux<TechnologyModel> findAllByIds(List<Long> ids) {
+        return technologyRepository.findAllById(ids).map(technologyEntityMapper::toTechnologyModel);
+    }
 }

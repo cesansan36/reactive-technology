@@ -42,6 +42,26 @@ public class CapabilityTechnologyUseCase implements ICapabilityTechnologyService
                 .next();
     }
 
+    @Override
+    public Mono<CapabilityWithTechnologiesModel> findAllByCapabilityId(Long capabilityId) {
+                // Busca los capability_technology por su capability_id
+        return capabilityTechnologyPersistencePort
+                .findAllByCapabilityId(capabilityId)
+                // Extrae de los capability_technology el technology_id
+                .map(CapabilityTechnologyModel::getTechnologyId)
+                .collectList()
+                // Busca las tecnologías por su id
+                .flatMapMany(technologyServicePort::findAllByIds)
+                // Crea un CapabilityWithTechnologiesModel combinando las tecnologías obtenidas y el capability_id inicial
+                .collectList()
+                .map(technologyList -> {
+                    CapabilityWithTechnologiesModel capabilityWithTechnologies = new CapabilityWithTechnologiesModel();
+                    capabilityWithTechnologies.setCapabilityId(capabilityId);
+                    capabilityWithTechnologies.setTechnologies(technologyList);
+                    return capabilityWithTechnologies;
+                });
+    }
+
     private CapabilityWithTechnologiesModel buildCapabilityWithTechnologies(Long capabilityId, List<TechnologyModel> technologies) {
         CapabilityWithTechnologiesModel capabilityWithTechnologiesModel = new CapabilityWithTechnologiesModel(capabilityId, technologies);
         technologies.forEach(technology -> System.out.println("technology: " + technology.toString())); // Para verificar los resultados
@@ -53,4 +73,78 @@ public class CapabilityTechnologyUseCase implements ICapabilityTechnologyService
         technologiesNames = linkModel.getTechnologiesNames();
         return technologiesNames;
     }
+
+    // ❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕
+    // Los métodos listados abajo son solo para propósitos de aprendizaje, no son necesarios para el correcto funcionamiento de la aplicación
+    // ❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕❕
+    public Mono<CapabilityWithTechnologiesModel> findAllByCapabilityIdNonCompact(Long capabilityId) {
+
+        Flux<CapabilityTechnologyModel> capabilityTechnologyFlux = capabilityTechnologyPersistencePort
+                .findAllByCapabilityId(capabilityId);
+
+        Mono<List<Long>> technologiesIds = capabilityTechnologyFlux
+                .map(capabilityTechnology -> {
+                            return capabilityTechnology.getTechnologyId();
+                        }
+                ).collectList();
+
+        Flux<TechnologyModel> technologyFlux = technologiesIds
+                .flatMapMany(ids -> {
+                            return technologyServicePort.findAllByIds(ids);
+                        }
+                );
+
+        Mono<CapabilityWithTechnologiesModel> finalCapabilityWithTechnologiesModelResult = technologyFlux
+                .collectList()
+                .map(technologyList -> {
+                    CapabilityWithTechnologiesModel capabilityWithTechnologies = new CapabilityWithTechnologiesModel();
+                    capabilityWithTechnologies.setCapabilityId(capabilityId);
+                    capabilityWithTechnologies.setTechnologies(technologyList);
+                    return capabilityWithTechnologies;
+                });
+
+        return finalCapabilityWithTechnologiesModelResult;
+    }
+
+    public Mono<CapabilityWithTechnologiesModel> findAllByCapabilityIdCompact(Long capabilityId) {
+
+        return capabilityTechnologyPersistencePort
+                .findAllByCapabilityId(capabilityId)
+                .map(CapabilityTechnologyModel::getTechnologyId)
+                .collectList()
+                .flatMapMany(technologyServicePort::findAllByIds)
+                .collectList()
+                .map(technologyList -> {
+                    CapabilityWithTechnologiesModel capabilityWithTechnologies = new CapabilityWithTechnologiesModel();
+                    capabilityWithTechnologies.setCapabilityId(capabilityId);
+                    capabilityWithTechnologies.setTechnologies(technologyList);
+                    return capabilityWithTechnologies;
+                });
+    }
+
+    public Mono<CapabilityWithTechnologiesModel> findAllByCapabilityIdSemiCompact(Long capabilityId) {
+        return findTechnologiesByCapabilityId(capabilityId)
+                .flatMapMany(this::findTechnologiesByIds)  // Usa flatMapMany ya que findTechnologiesByIds retorna un Flux
+                .collectList()
+                .map(technologyList -> buildFinalCapabilityWithTechnologiesModel(capabilityId, technologyList));
+    }
+
+    private Mono<List<Long>> findTechnologiesByCapabilityId(Long capabilityId) {
+        return capabilityTechnologyPersistencePort
+                .findAllByCapabilityId(capabilityId)
+                .map(CapabilityTechnologyModel::getTechnologyId)
+                .collectList();
+    }
+
+    private Flux<TechnologyModel> findTechnologiesByIds(List<Long> technologyIds) {
+        return technologyServicePort.findAllByIds(technologyIds);
+    }
+
+    private CapabilityWithTechnologiesModel buildFinalCapabilityWithTechnologiesModel(Long capabilityId, List<TechnologyModel> technologies) {
+        CapabilityWithTechnologiesModel capabilityWithTechnologies = new CapabilityWithTechnologiesModel();
+        capabilityWithTechnologies.setCapabilityId(capabilityId);
+        capabilityWithTechnologies.setTechnologies(technologies);
+        return capabilityWithTechnologies;
+    }
+
 }
