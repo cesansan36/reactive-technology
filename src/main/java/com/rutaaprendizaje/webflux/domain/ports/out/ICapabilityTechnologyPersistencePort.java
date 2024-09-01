@@ -7,4 +7,6 @@ public interface ICapabilityTechnologyPersistencePort {
     Flux<CapabilityTechnologyModel> saveAll(Flux<CapabilityTechnologyModel> capabilityTechnologyModels);
 
     Flux<CapabilityTechnologyModel> findAllByCapabilityId(Long capabilityId);
+
+    Flux<Long> findPaginatedCapabilityIdsByTechnologyAmount(int page, int size, String order);
 }

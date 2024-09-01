@@ -86,8 +86,11 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ICapabilityTechnologyPersistencePort capabilityTechnologyPersistencePort(ICapabilityTechnologyRepository capabilityTechnologyRepository, ICapabilityTechnologyEntityMapper capabilityTechnologyEntityMapper) {
-        return new CapabilityTechnologyPersistenceAdapter(capabilityTechnologyRepository, capabilityTechnologyEntityMapper);
+    public ICapabilityTechnologyPersistencePort capabilityTechnologyPersistencePort(
+            ICapabilityTechnologyRepository capabilityTechnologyRepository,
+            ICapabilityTechnologyEntityMapper capabilityTechnologyEntityMapper,
+            R2dbcEntityTemplate r2dbcEntityTemplate) {
+        return new CapabilityTechnologyPersistenceAdapter(capabilityTechnologyRepository, capabilityTechnologyEntityMapper, r2dbcEntityTemplate);
     }
 
     @Bean

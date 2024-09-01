@@ -30,8 +30,9 @@ public class TechnologyRouter {
                 .GET(TECHNOLOGIES_PATH + PAGINATED_SUB_PATH, technologyHandler::findAllPaginated)
                 .GET(TECHNOLOGIES_PATH + GET_BY_ID_SUB_PATH, technologyHandler::findById)
                 .GET(TECHNOLOGIES_PATH + BY_NAMES_SUB_PATH, technologyHandler::findByNames)
-                .GET(LINKED_CAPABILITY_TECHNOLOGIES_PATH + GET_BY_CAPABILITY_ID_SUB_PATH, capabilityTechnologyHandler::findTechnologiesByCapabilityId)
                 .GET(TECHNOLOGIES_PATH, technologyHandler::findAll)
+                .GET(LINKED_CAPABILITY_TECHNOLOGIES_PATH + GET_BY_CAPABILITY_ID_SUB_PATH, capabilityTechnologyHandler::findTechnologiesByCapabilityId)
+                .GET(LINKED_CAPABILITY_TECHNOLOGIES_PATH, capabilityTechnologyHandler::findPaginatedCapabilityIdsByTechnologyAmount)
                 .POST(TECHNOLOGIES_PATH, technologyHandler::save)
                 .POST(LINKED_CAPABILITY_TECHNOLOGIES_PATH, capabilityTechnologyHandler::save)
                 .build();

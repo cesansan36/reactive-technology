@@ -8,4 +8,6 @@ public interface ICapabilityTechnologyHandler {
     Mono<ServerResponse> save(ServerRequest request);
 
     Mono<ServerResponse> findTechnologiesByCapabilityId(ServerRequest request);
+
+    Mono<ServerResponse> findPaginatedCapabilityIdsByTechnologyAmount(ServerRequest request);
 }

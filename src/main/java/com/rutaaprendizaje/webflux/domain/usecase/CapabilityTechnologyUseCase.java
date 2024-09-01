@@ -62,6 +62,19 @@ public class CapabilityTechnologyUseCase implements ICapabilityTechnologyService
                 });
     }
 
+    @Override
+    public Flux<CapabilityWithTechnologiesModel> findAllByTechnologyAmount(int page, int size, String order) {
+        Flux<Long> capabilityIds = capabilityTechnologyPersistencePort.findPaginatedCapabilityIdsByTechnologyAmount(page, size, order);
+
+        Flux<CapabilityWithTechnologiesModel> capabilities = capabilityIds
+                .flatMap(capabilityId -> {
+                    return findAllByCapabilityId(capabilityId);
+                });
+
+        return capabilities;
+    }
+
+
     private CapabilityWithTechnologiesModel buildCapabilityWithTechnologies(Long capabilityId, List<TechnologyModel> technologies) {
         CapabilityWithTechnologiesModel capabilityWithTechnologiesModel = new CapabilityWithTechnologiesModel(capabilityId, technologies);
         technologies.forEach(technology -> System.out.println("technology: " + technology.toString())); // Para verificar los resultados

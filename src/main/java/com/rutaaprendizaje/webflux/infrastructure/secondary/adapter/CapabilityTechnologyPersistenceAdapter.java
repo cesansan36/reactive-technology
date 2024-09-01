@@ -8,6 +8,7 @@ import com.rutaaprendizaje.webflux.infrastructure.secondary.repository.ICapabili
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,6 +21,7 @@ public class CapabilityTechnologyPersistenceAdapter implements ICapabilityTechno
 
     private final ICapabilityTechnologyRepository capabilityTechnologyRepository;
     private final ICapabilityTechnologyEntityMapper capabilityTechnologyEntityMapper;
+    private final R2dbcEntityTemplate r2dbcEntityTemplate;
 
     @Override
     @Transactional
@@ -41,5 +43,24 @@ public class CapabilityTechnologyPersistenceAdapter implements ICapabilityTechno
     public Flux<CapabilityTechnologyModel> findAllByCapabilityId(Long capabilityId) {
         return capabilityTechnologyRepository.findAllByCapabilityId(capabilityId)
                 .map(capabilityTechnologyEntityMapper::toModel);
+    }
+
+    @Override
+    public Flux<Long> findPaginatedCapabilityIdsByTechnologyAmount(int page, int size, String order) {
+        // Construye la parte dinámica de la consulta para el orden
+        String orderByClause = "ORDER BY COUNT(technology_id) " + (order.equalsIgnoreCase("desc") ? "DESC" : "ASC");
+
+        // Construye la consulta SQL completa
+        String query = "SELECT capability_id FROM capability_technology " +
+                "GROUP BY capability_id " +
+                orderByClause + " " +
+                "LIMIT :size OFFSET :offset";
+
+        // Ejecuta la consulta
+        return r2dbcEntityTemplate.getDatabaseClient().sql(query)
+                .bind("size", size)
+                .bind("offset", page * size)
+                .map(row -> row.get("capability_id", Long.class))
+                .all();
     }
 }
