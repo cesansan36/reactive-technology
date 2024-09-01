@@ -50,7 +50,7 @@ public class CapabilityTechnologyHandler implements ICapabilityTechnologyHandler
     public Mono<ServerResponse> findPaginatedCapabilityIdsByTechnologyAmount(ServerRequest request) {
         int page = Integer.parseInt(request.queryParam("page").orElse("0"));
         int size = Integer.parseInt(request.queryParam("size").orElse("3"));
-        String order = request.queryParam("order").orElse(Sort.Direction.ASC.name());
+        String order = request.queryParam("direction").orElse(Sort.Direction.ASC.name());
 
         Flux<CapabilityWithTechnologiesResponse> response = capabilityTechnologyServicePort.findAllByTechnologyAmount(page, size, order)
                 .map(capabilityTechnologyResponseMapper::toCapabilityWithTechnologiesResponse);
