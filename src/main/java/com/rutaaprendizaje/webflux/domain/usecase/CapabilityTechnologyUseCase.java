@@ -101,6 +101,12 @@ public class CapabilityTechnologyUseCase implements ICapabilityTechnologyService
                         }
                 );
 
+//        Mono<List<TechnologyModel>> technologyFlux2 = technologiesIds
+//                .flatMap(ids -> {
+//                            return technologyServicePort.findAllByIds(ids).collectList();
+//                        }
+//                );
+
         Mono<CapabilityWithTechnologiesModel> finalCapabilityWithTechnologiesModelResult = technologyFlux
                 .collectList()
                 .map(technologyList -> {
