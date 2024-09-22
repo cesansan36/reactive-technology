@@ -47,16 +47,13 @@ public class CapabilityTechnologyPersistenceAdapter implements ICapabilityTechno
 
     @Override
     public Flux<Long> findPaginatedCapabilityIdsByTechnologyAmount(int page, int size, String order) {
-        // Construye la parte dinámica de la consulta para el orden
         String orderByClause = "ORDER BY COUNT(technology_id) " + (order.equalsIgnoreCase("desc") ? "DESC" : "ASC");
 
-        // Construye la consulta SQL completa
         String query = "SELECT capability_id FROM capability_technology " +
                 "GROUP BY capability_id " +
                 orderByClause + " " +
                 "LIMIT :size OFFSET :offset";
 
-        // Ejecuta la consulta
         return r2dbcEntityTemplate.getDatabaseClient().sql(query)
                 .bind("size", size)
                 .bind("offset", page * size)

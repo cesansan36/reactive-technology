@@ -53,18 +53,12 @@ public class TechnologyHandler implements ITechnologyHandler {
 
     @Override
     public Mono<ServerResponse> save(ServerRequest request) {
-        Mono<SaveTechnologyRequest> requestMono = request.bodyToMono(SaveTechnologyRequest.class)
-                .flatMap((dto -> {
-                    try {
-                        dtoValidator.validate(dto);
-                        return Mono.just(dto);
-                    } catch (Exception e) {
-                        return Mono.error(e);
-                    }
-                }));
 
-        Mono<TechnologyResponse> responseMono = requestMono.map(technologyRequestMapper::toTechnologyModel)
-                .flatMap(technologyModel -> technologyServicePort.save(Mono.just(technologyModel)))
+        Mono<TechnologyResponse> responseMono = request
+                .bodyToMono(SaveTechnologyRequest.class)
+                .map(technologyRequestMapper::toTechnologyModel)
+                .flatMap(technologyModel -> technologyServicePort
+                        .save(Mono.just(technologyModel)))
                 .map(technologyResponseMapper::toTechnologyResponse);
 
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(responseMono, TechnologyResponse.class);
