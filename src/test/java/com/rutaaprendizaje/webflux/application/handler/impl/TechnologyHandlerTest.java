@@ -86,25 +86,12 @@ class TechnologyHandlerTest {
         when(technologyServicePort.findById(1L)).thenReturn(Mono.just(new TechnologyModel(1L, "Tech 1", "Description 1")));
         when(technologyResponseMapper.toTechnologyResponse(any(TechnologyModel.class))).thenReturn(response);
 
-//        webTestClient.get()
-//                .uri("/technologies/1")
-//                .accept(MediaType.APPLICATION_JSON)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectBody()
-//                .jsonPath("$.id").isEqualTo(1)
-//                .jsonPath("$.name").isEqualTo("Tech 1")
-//                .jsonPath("$.description").isEqualTo("Description 1");
-
         webTestClient.get()
                 .uri("/technologies/1")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(TechnologyResponse.class)
-//                .consumeWith(technologyResponse -> {
-//                    System.out.println("Response body: " + Objects.requireNonNull(technologyResponse.getResponseBody()).toString());
-//                })
                 .value(technologyResponse -> assertThat(technologyResponse).usingRecursiveComparison().isEqualTo(response));
     }
 
