@@ -14,6 +14,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -51,7 +54,6 @@ class TechnologyUseCaseTest {
         verify(technologyPersistencePort, times(1)).findAll();
     }
 
-
     @Test
     void findById_ShouldReturnTechnologyModel_WhenFound() {
         Long id = 1L;
@@ -83,8 +85,6 @@ class TechnologyUseCaseTest {
 
         verify(technologyPersistencePort, times(1)).findById(id);
     }
-
-
 
     @Test
     void save_ShouldSaveTechnologyModel_WhenNotExists() {
@@ -137,4 +137,82 @@ class TechnologyUseCaseTest {
         verify(technologyPersistencePort, times(1)).findAllPaginated(0, 2, "name", Sort.Direction.ASC);
     }
 
+    @Test
+    void findAllByNames_Success() {
+        // Given
+        List<String> names = List.of("Java", "Python");
+
+        TechnologyModel technology1 = new TechnologyModel(1L, "Java", "Java description");
+        TechnologyModel technology2 = new TechnologyModel(2L, "Python", "Python description");
+
+        when(technologyPersistencePort.findAllByNames(names))
+                .thenReturn(Flux.just(technology1, technology2));
+
+        // When
+        Flux<TechnologyModel> result = technologyUseCase.findAllByNames(names);
+
+        // Then
+        StepVerifier.create(result)
+                .expectNextMatches(tech ->
+                        tech.getId().equals(1L) &&
+                                tech.getName().equals("Java") &&
+                                tech.getDescription().equals("Java description")
+                )
+                .expectNextMatches(tech ->
+                        tech.getId().equals(2L) &&
+                                tech.getName().equals("Python") &&
+                                tech.getDescription().equals("Python description")
+                )
+                .verifyComplete();
+    }
+
+    @Test
+    void findAllByNames_TechnologyNotFoundException() {
+        List<String> names = List.of("Java", "Python");
+
+        TechnologyModel technology = new TechnologyModel(1L,"Java","Coffee");
+        Flux<TechnologyModel> technologiesFoundFlux = Flux.just(technology);
+
+        when(technologyPersistencePort.findAllByNames(names)).thenReturn(technologiesFoundFlux);
+
+        Flux<TechnologyModel> result = technologyUseCase.findAllByNames(names);
+
+        StepVerifier.create(result)
+                .expectError(TechnologyNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    void findAllByNames_EmptyNamesList() {
+        // Given
+        List<String> names = List.of();
+
+        when(technologyPersistencePort.findAllByNames(names))
+                .thenReturn(Flux.empty());
+
+        // When
+        Flux<TechnologyModel> result = technologyUseCase.findAllByNames(names);
+
+        // Then
+        StepVerifier.create(result)
+                .verifyComplete();
+    }
+
+    @Test
+    void findAllByIds() {
+        // Datos de prueba
+        List<Long> ids = Arrays.asList(1L, 2L);
+
+        TechnologyModel technology1 = new TechnologyModel(1L, "Technology 1", "Description 1");
+        TechnologyModel technology2 = new TechnologyModel(2L, "Technology 2", "Description 2");
+        Flux<TechnologyModel> capabilitiesWithNoTechnologies = Flux.just(technology1, technology2);
+
+        when(technologyPersistencePort.findAllByIds(ids)).thenReturn(capabilitiesWithNoTechnologies);
+
+        // Ejecución y verificación
+        StepVerifier.create(technologyUseCase.findAllByIds(ids))
+                .expectNextMatches(technology -> technology.getId().equals(1L) && technology.getDescription().equals("Description 1"))
+                .expectNextMatches(technology -> technology.getId().equals(2L) && technology.getDescription().equals("Description 2"))
+                .verifyComplete();
+    }
 }
