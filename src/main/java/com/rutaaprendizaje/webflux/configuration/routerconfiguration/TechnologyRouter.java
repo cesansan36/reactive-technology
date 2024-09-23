@@ -79,6 +79,10 @@ public class TechnologyRouter {
                 .operationId("GetAllPaginatedTechnologies")
                 .summary("⭐ Get all paginated technologies")
                 .tag("⭐ Solo tecnologías")
+                .parameter(parameterBuilder().name("page").description("Page number").in(ParameterIn.QUERY).required(true).example("0"))
+                .parameter(parameterBuilder().name("size").description("Page size").in(ParameterIn.QUERY).required(true).example("3"))
+                .parameter(parameterBuilder().name("sortBy").description("Sort by").in(ParameterIn.QUERY).required(true).example("name"))
+                .parameter(parameterBuilder().name("direction").description("Sort direction").in(ParameterIn.QUERY).required(true).example("ASC"))
                 .response(responseBuilder().responseCode("200").description("Get all paginated technologies").implementationArray(TechnologyResponse.class));
     }
 
