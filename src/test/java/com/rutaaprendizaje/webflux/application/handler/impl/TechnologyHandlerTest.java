@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 
 import static com.rutaaprendizaje.webflux.util.Constants.GET_BY_ID_SUB_PATH;
 import static com.rutaaprendizaje.webflux.util.Constants.PAGINATED_SUB_PATH;
-import static com.rutaaprendizaje.webflux.util.Constants.PATH;
+import static com.rutaaprendizaje.webflux.util.Constants.TECHNOLOGIES_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -54,10 +54,10 @@ class TechnologyHandlerTest {
 
     private RouterFunction<ServerResponse> routerFunction() {
         return RouterFunctions.route()
-                .GET(PATH, technologyHandler::findAll)
-                .GET(PATH + PAGINATED_SUB_PATH, technologyHandler::findAllPaginated)
-                .GET(PATH + GET_BY_ID_SUB_PATH, technologyHandler::findById)
-                .POST(PATH, technologyHandler::save)
+                .GET(TECHNOLOGIES_PATH, technologyHandler::findAll)
+                .GET(TECHNOLOGIES_PATH + PAGINATED_SUB_PATH, technologyHandler::findAllPaginated)
+                .GET(TECHNOLOGIES_PATH + GET_BY_ID_SUB_PATH, technologyHandler::findById)
+                .POST(TECHNOLOGIES_PATH, technologyHandler::save)
                 .build();
     }
 
@@ -86,25 +86,12 @@ class TechnologyHandlerTest {
         when(technologyServicePort.findById(1L)).thenReturn(Mono.just(new TechnologyModel(1L, "Tech 1", "Description 1")));
         when(technologyResponseMapper.toTechnologyResponse(any(TechnologyModel.class))).thenReturn(response);
 
-//        webTestClient.get()
-//                .uri("/technologies/1")
-//                .accept(MediaType.APPLICATION_JSON)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectBody()
-//                .jsonPath("$.id").isEqualTo(1)
-//                .jsonPath("$.name").isEqualTo("Tech 1")
-//                .jsonPath("$.description").isEqualTo("Description 1");
-
         webTestClient.get()
                 .uri("/technologies/1")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(TechnologyResponse.class)
-//                .consumeWith(technologyResponse -> {
-//                    System.out.println("Response body: " + Objects.requireNonNull(technologyResponse.getResponseBody()).toString());
-//                })
                 .value(technologyResponse -> assertThat(technologyResponse).usingRecursiveComparison().isEqualTo(response));
     }
 

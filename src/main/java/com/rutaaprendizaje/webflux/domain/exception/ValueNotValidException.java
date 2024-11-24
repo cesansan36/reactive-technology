@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class ValueNotValidException extends CustomException {
 
     public ValueNotValidException(String message) {
-        super(HttpStatus.BAD_REQUEST, message);
+        super(HttpStatus.BAD_REQUEST, "C+: "+message);
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.data.relational.core.query.Query;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort {
 
@@ -27,7 +29,9 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
 
     @Override
     public Mono<TechnologyModel> findById(Long id) {
-        return technologyRepository.findById(id).map(technologyEntityMapper::toTechnologyModel);
+        return technologyRepository
+                .findById(id)
+                .map(technologyEntityMapper::toTechnologyModel);
     }
 
     @Override
@@ -53,5 +57,15 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
 
         return r2dbcEntityTemplate.select(query, TechnologyEntity.class)
                 .map(technologyEntityMapper::toTechnologyModel);
+    }
+
+    @Override
+    public Flux<TechnologyModel> findAllByNames(List<String> names) {
+        return technologyRepository.findByNameIn(names).map(technologyEntityMapper::toTechnologyModel);
+    }
+
+    @Override
+    public Flux<TechnologyModel> findAllByIds(List<Long> ids) {
+        return technologyRepository.findAllById(ids).map(technologyEntityMapper::toTechnologyModel);
     }
 }

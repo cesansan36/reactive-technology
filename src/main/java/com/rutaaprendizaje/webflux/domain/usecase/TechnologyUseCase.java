@@ -11,6 +11,9 @@ import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
+import static com.rutaaprendizaje.webflux.domain.util.DomainExceptionConstants.AT_LEAST_ONE_TECHNOLOGY_NOT_FOUND;
 import static com.rutaaprendizaje.webflux.domain.util.DomainExceptionConstants.TECHNOLOGY_ALREADY_EXISTS;
 import static com.rutaaprendizaje.webflux.domain.util.DomainExceptionConstants.TECHNOLOGY_NOT_FOUND;
 
@@ -26,7 +29,9 @@ public class TechnologyUseCase implements ITechnologyServicePort {
 
     @Override
     public Mono<TechnologyModel> findById(Long id) {
-        return technologyPersistencePort.findById(id).switchIfEmpty(Mono.error(new TechnologyNotFoundException(TECHNOLOGY_NOT_FOUND)));
+        return technologyPersistencePort
+                .findById(id)
+                .switchIfEmpty(Mono.error(new TechnologyNotFoundException(TECHNOLOGY_NOT_FOUND)));
     }
 
     @Override
@@ -48,4 +53,20 @@ public class TechnologyUseCase implements ITechnologyServicePort {
         return technologyPersistencePort.findAllPaginated(page, size, sortBy, direction);
     }
 
+    @Override
+    public Flux<TechnologyModel> findAllByNames(List<String> names) {
+        return technologyPersistencePort.findAllByNames(names)
+                .collectList()
+                .flatMapMany(technologies -> {
+                    if (technologies.size() != names.size()) {
+                        return Mono.error(new TechnologyNotFoundException(AT_LEAST_ONE_TECHNOLOGY_NOT_FOUND));
+                    }
+                    return Flux.fromIterable(technologies);
+                });
+    }
+
+    @Override
+    public Flux<TechnologyModel> findAllByIds(List<Long> ids) {
+        return technologyPersistencePort.findAllByIds(ids);
+    }
 }

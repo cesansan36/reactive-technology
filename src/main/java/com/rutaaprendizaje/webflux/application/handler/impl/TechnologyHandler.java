@@ -1,6 +1,7 @@
 package com.rutaaprendizaje.webflux.application.handler.impl;
 
 import com.rutaaprendizaje.webflux.application.dto.request.SaveTechnologyRequest;
+import com.rutaaprendizaje.webflux.application.dto.response.TechnologyForCapabilityResponse;
 import com.rutaaprendizaje.webflux.application.dto.response.TechnologyResponse;
 import com.rutaaprendizaje.webflux.application.handler.ITechnologyHandler;
 import com.rutaaprendizaje.webflux.application.mapper.ITechnologyRequestMapper;
@@ -40,25 +41,24 @@ public class TechnologyHandler implements ITechnologyHandler {
     public Mono<ServerResponse> findById(ServerRequest request) {
         Long id = Long.valueOf(request.pathVariable("id"));
 
-        Mono<TechnologyResponse> technologyResponseMono = technologyServicePort.findById(id).map(technologyResponseMapper::toTechnologyResponse);
+        Mono<TechnologyResponse> technologyResponseMono = technologyServicePort
+                .findById(id)
+                .map(technologyResponseMapper::toTechnologyResponse);
 
-        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(technologyResponseMono, TechnologyResponse.class);
+        return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(technologyResponseMono, TechnologyResponse.class);
     }
 
     @Override
     public Mono<ServerResponse> save(ServerRequest request) {
-        Mono<SaveTechnologyRequest> requestMono = request.bodyToMono(SaveTechnologyRequest.class)
-                .flatMap((dto -> {
-                    try {
-                        dtoValidator.validate(dto);
-                        return Mono.just(dto);
-                    } catch (Exception e) {
-                        return Mono.error(e);
-                    }
-                }));
 
-        Mono<TechnologyResponse> responseMono = requestMono.map(technologyRequestMapper::toTechnologyModel)
-                .flatMap(technologyModel -> technologyServicePort.save(Mono.just(technologyModel)))
+        Mono<TechnologyResponse> responseMono = request
+                .bodyToMono(SaveTechnologyRequest.class)
+                .map(technologyRequestMapper::toTechnologyModel)
+                .flatMap(technologyModel -> technologyServicePort
+                        .save(Mono.just(technologyModel)))
                 .map(technologyResponseMapper::toTechnologyResponse);
 
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(responseMono, TechnologyResponse.class);
@@ -75,6 +75,16 @@ public class TechnologyHandler implements ITechnologyHandler {
                 .map(technologyResponseMapper::toTechnologyResponse);
 
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(technologyResponseFlux, TechnologyResponse.class);
+    }
+
+    @Override
+    public Mono<ServerResponse> findByNames(ServerRequest request) {
+        List<String> names = request.queryParams().get("names");
+
+        Flux<TechnologyForCapabilityResponse> technologyResponseFlux = technologyServicePort.findAllByNames(names)
+                .map(technologyResponseMapper::toTechnologyForCapabilityResponse);
+
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(technologyResponseFlux, TechnologyForCapabilityResponse.class);
     }
 
 }

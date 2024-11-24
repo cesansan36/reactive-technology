@@ -4,15 +4,10 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-public interface ITechnologyHandler {
-
-    Mono<ServerResponse> findAll(ServerRequest request);
-
-    Mono<ServerResponse> findById(ServerRequest request);
-
+public interface ICapabilityTechnologyHandler {
     Mono<ServerResponse> save(ServerRequest request);
 
-    Mono<ServerResponse> findAllPaginated(ServerRequest request);
+    Mono<ServerResponse> findTechnologiesByCapabilityId(ServerRequest request);
 
-    Mono<ServerResponse> findByNames(ServerRequest request);
+    Mono<ServerResponse> findPaginatedCapabilityIdsByTechnologyAmount(ServerRequest request);
 }
